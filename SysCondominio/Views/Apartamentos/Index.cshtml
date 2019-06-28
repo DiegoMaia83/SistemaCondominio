@@ -1,0 +1,46 @@
+﻿@model IEnumerable<SysCondominio.Models.Apartamento>
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<p>
+    @Html.ActionLink("Novo Apartamento", "Criar")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Numero)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BlocoId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Observacoes)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Numero)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bloco.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Observacoes)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ApartamentoId }) |
+                @Html.ActionLink("Detalhes", "Detalhes", new { id = item.ApartamentoId })
+            </td>
+        </tr>
+    }
+
+</table>
+
