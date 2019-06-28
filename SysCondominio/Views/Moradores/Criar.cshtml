@@ -4,10 +4,16 @@
     ViewBag.Title = "Criar";
 }
 
-@using (Html.BeginForm()) 
+
+
+
+
+
+
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Morador</h4>
         <hr />
@@ -23,8 +29,9 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ApartamentoId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(x => x.ApartamentoId, (IEnumerable<SelectListItem>)ViewBag.RetornaApartamentos, new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.ApartamentoId, (IEnumerable<SelectListItem>)ViewBag.RetornaApartamentos, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ApartamentoId, "", new { @class = "text-danger" })
+
             </div>
         </div>
 
@@ -60,6 +67,19 @@
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+
+
+@section Scripts {
+    <script src="~/Scripts/jquery.mask.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            
+            $("#Cpf").mask('000.000.000-00', { reverse: true });
+            $("#Rg").mask('00.000.000-0', { reverse: true });
+            $("#DataNascimento").mask('00/00/0000', { reverse: false });
+        });
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+}
