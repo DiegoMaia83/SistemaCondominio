@@ -13,7 +13,7 @@ namespace SistemaCondominio.Controllers
 
         public ActionResult Index()
         {
-            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login");
+            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login/Index");
 
             var lista = _usuarioAplicacao.RetornarTodos();
 

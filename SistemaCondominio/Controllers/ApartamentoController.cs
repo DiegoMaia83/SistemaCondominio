@@ -15,7 +15,7 @@ namespace SistemaCondominio.Controllers
         
         public ActionResult Home()
         {
-            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login");
+            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login/Index");
 
             ViewBag.ListaBlocos = _apartamentoAplicacao.ListarBlocos();
 
@@ -24,7 +24,7 @@ namespace SistemaCondominio.Controllers
 
         public ActionResult Detalhes(int apartamentoId = 0)
         {
-            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login");
+            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login/Index");
 
             try
             {
@@ -50,7 +50,7 @@ namespace SistemaCondominio.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult Detalhes(Apartamento apartamento)
         {
-            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login");
+            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login/Index");
 
             try
             {
@@ -165,7 +165,7 @@ namespace SistemaCondominio.Controllers
 
         public ActionResult Vagas()
         {
-            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login");
+            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login/Index");
 
             var lista = _apartamentoAplicacao.ListarVagas();
 

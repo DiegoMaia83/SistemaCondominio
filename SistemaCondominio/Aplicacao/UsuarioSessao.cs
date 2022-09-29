@@ -78,7 +78,7 @@ namespace SistemaCondominio.Aplicacao
                     return false;
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }

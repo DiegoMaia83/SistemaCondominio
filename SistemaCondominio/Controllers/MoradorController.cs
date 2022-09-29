@@ -15,14 +15,14 @@ namespace SistemaCondominio.Controllers
 
         public ActionResult Home()
         {
-            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login");
+            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login/Index");
 
             return View();
         }
 
         public ActionResult Detalhes(int moradorId = 0)
         {
-            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login");
+            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login/Index");
 
             var morador = new Morador();   
             
@@ -38,7 +38,7 @@ namespace SistemaCondominio.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult Detalhes(Morador morador)
         {
-            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login");
+            if (!UsuarioSessao.ValidaToken()) Response.Redirect("/Login/Index");
 
             try
             {
