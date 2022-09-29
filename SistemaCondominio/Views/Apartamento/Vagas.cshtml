@@ -1,0 +1,129 @@
+﻿
+@{
+    ViewBag.Title = "Vagas";
+}
+
+<style>
+
+    .divVaga {
+        border: 1px dashed #ccc;
+        margin-bottom: 2px;
+        width: 100%;
+        padding: 5px;
+        text-align: center;
+    }
+
+    #tableP1 td {
+        width: 20%;
+        vertical-align: top;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Vagas</h5>
+    </div>
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-sm-12">
+                <button class="btn btn-outline-dark btn-sm">&nbsp;</button>&nbsp;Desocupado
+                <button class="btn btn-secondary btn-sm">&nbsp;</button>&nbsp;Ocupado
+            </div>
+
+        </div>
+
+        <hr />
+
+        <div class="row">
+            <div class="col-sm-6" id="divListaVagas">
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalVaga" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vagaModalTitle">Detalhes vaga</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="divDetalhesVaga">
+                ...
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        listarVagas();
+
+    })
+
+    // Listar as vagas
+    var listarVagas = function () {
+
+        $.ajax({
+            url: "/Apartamento/ListarVagas",
+            method: "get",
+            success: function (data) {
+                $("#divListaVagas").html(data);
+            }
+        });
+
+    }
+
+    // Exibe e oculta div com detalhes da vaga
+    var mostraDiv = function (idVaga) {
+        $("#div-" + idVaga).fadeToggle();
+    }
+
+    // Retorna os detalhes da vaga
+    var detalhesVaga = function (id) {
+
+        $("#divDetalhesVaga").html("");
+
+        $.ajax({
+            url: "/Apartamento/RetornarVaga?id=" + id,
+            dataType: "html",
+            success: function (data) {
+                $("#divDetalhesVaga").html(data);
+            }
+        });
+
+        $("#modalVaga").modal("show");
+
+        //window.location.href = "/Apartamento/Vaga?id=" + id;
+    };
+
+    // Alterar vaga
+    var alterarVaga = function (vaga) {
+
+        $.ajax({
+            url: "/Apartamento/AlterarVaga",
+            method: "post",
+            data: vaga,
+            success: function (data) {
+                $("#modalVaga").modal("hide");
+                listarVagas();
+            }
+        })
+
+    }
+
+</script>

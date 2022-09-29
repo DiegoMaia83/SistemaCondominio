@@ -1,0 +1,48 @@
+﻿@model IEnumerable<SistemaCondominio.Models.Apartamento>
+
+@{
+    Layout = null;
+}
+
+<table class="table">
+
+    <tr>        
+        <td>Número</td>
+        <td>Bloco</td>
+        <td>Moradores</td>
+        <td>Ocupação</td>
+        <td width="15%"></td>
+    </tr>
+    
+    @foreach(var apartamento in Model.OrderBy(x => x.Numero))
+    {
+<tr>
+    <td><b>@apartamento.Bloco.Nome.Substring(0, 1)</b>@apartamento.Numero.ToString("000")</td>
+    <td>@apartamento.Bloco.Nome</td>
+    <td>
+
+
+        @foreach (var moradores in apartamento.Ocupacao.Where(x => x.Excluido == false))
+        {
+            <a href="/Morador/Detalhes?MoradorId=@moradores.MoradorId" class="btn btn-outline-dark btn-sm">
+                <i class="fas fa-user"></i>
+                @moradores.Morador.Nome.Split(' ')[0]
+            </a>
+        }
+    </td>
+    <td>
+        @if (apartamento.Ocupado == true)
+        {
+            <button class="btn btn-info btn-sm" style="width: 120px;">Ocupado</button>
+        }
+        else
+        {
+            <button class="btn btn-outline-info btn-sm" style="width: 120px;">Desocupado</button>
+        }
+
+    </td>
+    <td><a href="Detalhes?ApartamentoId=@apartamento.ApartamentoId" class="btn btn-outline-secondary btn-sm btn-block">Detalhes</a></td>
+</tr>
+    }
+
+</table>

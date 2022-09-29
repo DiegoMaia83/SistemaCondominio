@@ -1,0 +1,90 @@
+﻿@using SistemaCondominio.Models
+
+@{
+    ViewBag.Title = "Home";
+
+    IEnumerable<ApartamentoBloco> listaBlocos = ViewBag.ListaBlocos;
+}
+
+
+<div class="card">
+
+    <div class="card-header">
+        <h5>Apartamentos</h5>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-sm-3">                
+                <select class="form-control" id="txBloco">
+                    <option value="">-- Selecione um bloco --</option>
+                    @foreach(var bloco in listaBlocos)
+                    {
+                        <option value="@bloco.BlocoId">@bloco.Nome</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-sm-2">
+                <select class="form-control" id="txOcupacao">    
+                    <option value=""></option>
+                    <option value="true">Ocupado</option>
+                    <option value="false">Desocupado</option>
+                </select>
+            </div>
+
+            <div class="col-sm-4">
+
+            </div>
+
+            <div class="col-sm-3">
+                <button class="btn btn-dark btn-block" onclick="window.location.href='/Apartamento/Detalhes'">Novo apartamento</button>
+            </div>
+
+        </div>
+
+        <br />
+
+        <div class="row">
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12" id="divListaApartamentos" align="center">                
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {        
+        listaApartamentos($("#txBloco").val(), $("#txOcupacao").val());
+    });
+
+    $("#txBloco").change(function () {
+        listaApartamentos($("#txBloco").val(), $("#txOcupacao").val());
+    });
+
+    $("#txOcupacao").change(function () {
+        listaApartamentos($("#txBloco").val(), $("#txOcupacao").val());
+    });
+
+    function listaApartamentos(blocoId,ocupado) {
+        $.ajax({
+            url: "/Apartamento/ListarApartamentos?blocoId=" + blocoId + "&ocupado=" + ocupado,
+            method: "get",
+            beforeSend: function () {
+                $("#divListaApartamentos").html('<img src="../Content/images/loading.gif" style="width: 100px;" />');
+            },
+            success: function (data) {                
+                $("#divListaApartamentos").html(data);
+            }
+        });
+    }
+
+</script>

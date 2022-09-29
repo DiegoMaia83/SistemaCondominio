@@ -1,0 +1,205 @@
+﻿@model SistemaCondominio.Models.Morador
+
+@{
+    ViewBag.Title = "Detalhes";
+}
+
+<div class="card">
+
+    <div class="card-header">
+        <h5>Detalhes morador</h5>
+    </div>
+
+    <div class="card-body">
+
+        <form id="form">
+
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div id="response-alert" style="display: none;"></div>
+                </div>
+            </div>
+
+            <input type="hidden" id="MoradorId" name="MoradorId" value="@Model.MoradorId" />
+            <input type="hidden" id="UsuCriacao" name="UsuCriacao" value="@Model.UsuCriacao" />
+            <input type="hidden" id="DataCriacao" name="DataCriacao" value="@Model.DataCriacao" />
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Nome</label>
+                    <input type="text" class="form-control" id="Nome" name="Nome" value="@Model.Nome" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Cpf</label>
+                    <input type="text" class="form-control" id="Cpf" name="Cpf" value="@Model.Cpf" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Rg</label>
+                    <input type="text" class="form-control" id="Rg" name="Rg" value="@Model.Rg" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Data Nascimento</label>
+                    <input type="date" class="form-control" id="DataNascimento" name="DataNascimento" value="@Model.DataNascimento.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Gênero</label>
+                    <input type="text" class="form-control" id="Genero" name="Genero" value="@Model.Genero" />
+                </div>
+            </div>
+
+            <br />
+
+            <div class="row">
+                <div class="col-sm-9 small">
+
+                    @if (Model.UsuCriacao != null)
+                    {
+                        <span>Criação: @Model.UsuCriacao ( @Model.DataCriacao )</span>
+                    }
+
+                    @if (Model.UsuAlteracao != null)
+                    {
+                        <span>&nbsp; &nbsp; | &nbsp; &nbsp; Última alteração: @Model.UsuAlteracao ( @Model.DataAlteracao )</span>
+                    }
+
+
+                </div>
+                <div class="col-sm-3">
+                    <button id="btnSalvar" class="btn btn-info btn-block" type="button">Salvar</button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<br>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Logs</h5>
+    </div>
+    <div class="card-body">
+
+        @if (Model.Logs != null)
+        {
+            <table class="table">
+                <tr>
+                    <td>Log Id</td>
+                    <td>Usuário</td>
+                    <td>Ip</td>
+                    <td>Data Log</td>
+                    <td>Descrição</td>
+                </tr>
+
+
+                @foreach (var log in Model.Logs.Where(x => x.MoradorId == Model.MoradorId).OrderByDescending(x => x.DataLog))
+                {
+                    <tr>
+                        <td>@log.LogId</td>
+                        <td>@log.Usuario.Nome</td>
+                        <td>@log.Ip</td>
+                        <td>@log.DataLog</td>
+                        <td>@log.Descricao</td>
+                    </tr>
+                }
+
+            </table>
+        } 
+        else
+        {
+        <span>Nenhum Log registrado</span>
+        }
+
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        setMask();
+    });
+
+    $("#btnSalvar").click(function () {
+
+        // Valida o nome
+        if ($('#Nome').val() == 0 || $("#Nome").val() == "") {
+            callAlertDanger("#response-alert", "O campo nome é obrigatório", function () {
+                $('#Nome').focus();
+                $("#response-alert").hide("slow");
+            });
+            return false;
+        }
+
+        // Valida o cpf
+        if ($('#Cpf').val() == 0 || $("#Cpf").val() == "") {
+            callAlertDanger("#response-alert", "Insira um formato de CPF válido", function () {
+                $('#Cpf').focus();
+                $("#response-alert").hide("slow");
+            });
+            return false;
+        }
+
+        // Valida a data de nascimento
+        if ($('#DataNascimento').val() == "0001-01-01" || $('#DataNascimento').val() == "") {
+            callAlertDanger("#response-alert", "Insira um data de nascimento válida", function () {
+                $('#DataNascimento').focus();
+                $("#response-alert").hide("slow");
+            });
+            return false;
+        }
+
+        // Valida o genero
+        if ($('#Genero').val() == 0 || $("#Genero").val() == "") {
+            callAlertDanger("#response-alert", "Insira um Gênero", function () {
+                $('#Genero').focus();
+                $("#response-alert").hide("slow");
+            });
+            return false;
+        }
+
+        salvarMorador();
+    });
+
+    var setMask = function () {
+        $("#Cpf").mask("000.000.000-00");
+    }
+
+    var salvarMorador = function () {
+
+        $("#Cpf").unmask();
+
+        var form = $("#form").serialize();
+
+        $.ajax({
+            url: "/Morador/Detalhes",
+            type: "POST",
+            dataType: "JSON",
+            data: form,            
+            success: function (data) {                
+                if (data.Sucesso) {
+                    callAlertSuccess("#response-alert", data.Mensagem, function () {                        
+                        $("#response-alert").hide("slow");
+                        window.location.href = "/Morador/Detalhes?MoradorId=" + data.Id
+                    });
+                } else {
+                    callAlertDanger("#response-alert", data.Mensagem, function () {
+                        $("#response-alert").hide("slow");
+                    });
+                }
+            },
+            complete: function () {
+                setMask();
+            }
+        });        
+    }
+
+</script>
+

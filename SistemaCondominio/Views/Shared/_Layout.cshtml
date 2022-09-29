@@ -1,0 +1,79 @@
+﻿@using SistemaCondominio.Aplicacao
+
+<!DOCTYPE html>
+<html>
+
+@RenderPage("_Header.cshtml")
+
+<style>
+
+    body {
+        background: url('/Content/images/bg-1.jpg');
+        background-repeat: repeat;
+        background-size: 100%;
+
+    }
+</style>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">@(UsuarioSessao.Logado.UsuarioId > 0 ? "SGC" : "Sistema de gerenciamento de condomínio")</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                
+                <ul class="navbar-nav mr-auto">
+                    @if (UsuarioSessao.Logado.UsuarioId > 0) 
+                    { 
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Apartamentos
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/Apartamento/Home">Home</a>
+                                <a class="dropdown-item" href="/Apartamento/Detalhes">Novo Apartamento</a>
+                                <a class="dropdown-item" href="/Apartamento/Vagas">Vagas</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Moradores
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/Morador/Home">Home</a>
+                                <a class="dropdown-item" href="/Morador/Detalhes">Novo Morador</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    @if (@UsuarioSessao.Logado.UsuarioId > 0)
+                    {
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                            <button class="btn btn-outline-light">Bem vindo, @UsuarioSessao.Logado.Nome</button>
+                            <button class="btn btn-outline-light"><a href="/Login/Logoff">Sair</a></button>
+                        </div>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-default btn-sm"><a href="/Login/Index">Entrar</a></button>
+                    }
+
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    @RenderPage("_Footer.cshtml")
+
+</body>
+</html>

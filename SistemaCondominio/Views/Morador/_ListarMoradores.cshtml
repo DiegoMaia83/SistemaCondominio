@@ -1,0 +1,34 @@
+﻿@model IEnumerable<SistemaCondominio.Models.Morador>
+
+@{
+    Layout = null;
+}
+
+<table class="table">
+    <tr>
+        <td>Id</td>
+        <td>Nome</td>
+        <td>Cpf</td>        
+        <td>Data Nascimento</td>
+        <td>Apartamento(s)</td>
+        <td></td>
+    </tr>
+
+    @foreach (var morador in Model.OrderBy(x => x.Nome))
+    {
+        <tr>
+            <td>@morador.MoradorId.ToString("000000")</td>
+            <td>@morador.Nome</td>
+            <td>@morador.Cpf</td>            
+            <td>@morador.DataNascimento.ToString("dd/MM/yyyy")</td>
+            <td>
+                @foreach (var ocupacao in morador.Ocupacao.Where(x => x.Excluido == false))
+                {
+                <a href="/Apartamento/Detalhes?ApartamentoId=@ocupacao.ApartamentoId" class="btn btn-outline-dark"><b>@ocupacao.Apartamento.Bloco.Nome.Substring(0,1)</b>@(ocupacao.ApartamentoId.ToString("000"))</a>                    
+                }
+            </td>
+            <td><a href="Detalhes?MoradorId=@morador.MoradorId" class="btn btn-outline-secondary btn-block">Detalhes</a></td>
+        </tr>
+    }
+
+</table>

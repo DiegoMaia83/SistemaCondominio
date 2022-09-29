@@ -1,0 +1,418 @@
+﻿@model SistemaCondominio.Models.Apartamento
+
+@{
+    ViewBag.Title = "Detalhes";
+}
+
+
+<div class="card">
+
+    <div class="card-header">
+        <h5><i class="fas fa-building"></i> Detalhes Apartamento</h5>
+    </div>
+
+    <div class="card-body">
+
+        <form id="form" method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+
+                <div class="col-sm-12">
+
+                    <div id="response-alert" style="display: none;"></div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <input type="hidden" id="ApartamentoId" name="ApartamentoId" value="@Model.ApartamentoId" />
+                <input type="hidden" id="UsuCriacao" name="UsuCriacao" value="@Model.UsuCriacao" />
+                <input type="hidden" id="DataCriacao" name="DataCriacao" value="@Model.DataCriacao" />
+
+                <div class="col-sm-2">
+                    <label>ID</label>
+                    <div class="form-control">@Model.ApartamentoId.ToString("0000")</div>
+                </div>
+
+                <div class="col-sm-2">
+                    <label>Número</label>
+                    <input type="text" class="form-control" id="Numero" name="Numero" value="@Model.Numero" maxlength="4" />
+                </div>
+
+                <div class="col-sm-2">
+                    <label>Andar</label>
+                    <input type="text" class="form-control" id="Andar" name="Andar" value="@Model.Andar" maxlength="2" />
+                </div>
+
+                <div class="col-sm-5">
+                    <label>Bloco</label>
+                    <select class="form-control" id="BlocoId" name="BlocoId">
+                        <option value="">-- Selecione um Bloco --</option>
+                        @foreach (var blocos in ViewBag.ListaBlocos)
+                        {
+                            <option value="@blocos.BlocoId" @(Model.BlocoId == blocos.BlocoId ? "selected" : "")>@blocos.Nome</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-sm-1">
+                    <label>Ocupado</label>
+                    <input class="form-control" type="checkbox" id="Ocupado" name="Ocupado" value="true" @(Model.Ocupado == true ? "checked" : "") />
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="row">
+
+                <div class="col-sm-12">
+
+                    <label>Observações</label>
+                    <textarea class="form-control" id="Observacao" name="Observacao" maxlength="1024">@Model.Observacao</textarea>
+
+                </div>
+
+            </div>
+
+            <br />
+
+            <div class="row">
+
+                <div class="col-sm-9 small">
+
+                    @if (Model.UsuCriacao != null)
+                    {
+                        <span>Criação: @Model.UsuCriacao ( @Model.DataCriacao )</span>
+                    }
+
+                    @if (Model.UsuAlteracao != null)
+                    {
+                        <span>&nbsp; &nbsp; | &nbsp; &nbsp; Última alteração: @Model.UsuAlteracao ( @Model.DataAlteracao )</span>
+                    }
+
+                </div>
+
+                <div class="col-sm-3">
+
+                    <button id="btnSalvar" class="btn btn-info btn-block" type="button">Salvar</button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<br>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row"> 
+            <div class="col-sm-9">
+                <h5><i class="fas fa-users"></i> Moradores</h5>
+            </div>
+            <div class="col-sm-3">
+                <button id="btnModalMorador" class="btn btn-dark btn-block">Add morador</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+
+        @if (Model.ApartamentoId > 0 && Model.Ocupacao.Where(x => x.Excluido == false).Count() > 0)
+        {
+            <div id="response-ocupacao-alert" style="display: none;"></div>
+
+            <table class="table">
+                <tr>
+                    <td>Nome</td>
+                    <td>Cpf</td>
+                    <td>Rg</td>
+                    <td>Data Nascimento</td>
+                    <td></td>
+                </tr>
+
+                @foreach (var ocupacao in Model.Ocupacao.Where(x => x.Excluido == false))
+                {
+                    <tr>
+                        <td><a href="/Morador/Detalhes?MoradorId=@ocupacao.MoradorId">@ocupacao.Morador.Nome</a></td>
+                        <td>@ocupacao.Morador.Cpf</td>
+                        <td>@ocupacao.Morador.Rg</td>
+                        <td>@ocupacao.Morador.DataNascimento.ToString("dd/MM/yyyy")</td>
+                        <td><button type="button" class="btn btn-outline-danger delMoradorOcupacao" value="@ocupacao.OcupacaoId">Remover</button></td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <span>Nenhum Morador registrado</span>
+        }
+
+    </div>
+</div>
+
+<br>
+
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fas fa-list"></i> Andamentos</h5>
+    </div>
+    <div class="card-body">
+        <div id="response-andamento-alert" style="display: none;"></div>
+
+        <div class="row">
+            <div class="col-sm-10">
+                <textarea class="form-control" id="DescricaoAndamento" style="height: 50px;"></textarea>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" id="btnGravarAndamento" class="btn btn-outline-dark" style="height: 50px;">Inserir andamento</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                @if (Model.ApartamentoId > 0 && Model.Andamento.Count > 0)
+                {
+                    <table class="table">
+                        <tr>
+                            <td>Andamento Id</td>
+                            <td>Descriçao</td>
+                            <td>Usuário</td>
+                            <td>Data Andamento</td>
+                        </tr>
+
+                        @foreach (var andamento in Model.Andamento)
+                        {
+                            <tr>
+                                <td>@andamento.AndamentoId.ToString("000000")</td>
+                                <td>@andamento.Descricao</td>
+                                <td>@andamento.UsuAndamento</td>
+                                <td>@andamento.DataAndamento</td>
+                            </tr>
+                        }
+                    </table>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fas fa-bookmark"></i> Logs</h5>
+    </div>
+    <div class="card-body">
+
+        @if (Model.ApartamentoId > 0 && Model.Logs.Count > 0)
+        {
+            <table class="table">
+                <tr>
+                    <td>Log Id</td>
+                    <td>Usuário</td>
+                    <td>Ip</td>
+                    <td>Data Log</td>
+                    <td>Descrição</td>
+                </tr>
+
+                @foreach (var log in Model.Logs.Where(x => x.ApartamentoId == Model.ApartamentoId).OrderByDescending(x => x.DataLog))
+                {
+                    <tr>
+                        <td>@log.LogId.ToString("000000")</td>
+                        <td>@log.Usuario.Nome</td>
+                        <td>@log.Ip</td>
+                        <td>@log.DataLog</td>
+                        <td>@log.Descricao</td>
+                    </tr>
+                }
+
+            </table>
+        } 
+        else
+        {
+            <span>Nenhum Log Registrado</span>
+        }
+
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalAddMorador" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar morador</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>            
+
+            <div class="modal-body">
+
+                <div id="response-secondary-alert" style="display: none;"></div>
+
+                <input type="text" id="txInputMorador" class="form-control" placeholder="Digite um nome ou o cpf (sem espaços)" />
+
+                <div id="divModalMoradores">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#Numero").keyup(function () {
+            $("#Numero").val(toNumber($("#Numero").val()));
+        })
+
+    });
+
+    $("#btnSalvar").click(function () {
+        salvarApartamento();
+    });
+
+    $("#btnModalMorador").click(function () {
+        listaMoradores($("#ApartamentoId").val(),"");
+        $("#modalAddMorador").modal("show");
+    });
+
+    $("#txInputMorador").keyup(function () {
+        listaMoradores($("#ApartamentoId").val(),$("#txInputMorador").val());
+    });
+
+    $(".delMoradorOcupacao").click(function () {
+        if (confirm("Deseja realmente desassociar esse morador do apartamento?\nEssa operação é irreversível!")) {
+            delMoradorOcupacao($(this).val());
+        }        
+    });
+
+    $("#btnGravarAndamento").click(function () {
+        var json = {
+            ApartamentoId: $("#ApartamentoId").val(),
+            Descricao: $("#DescricaoAndamento").val()
+        }
+
+        if ($("#DescricaoAndamento").val() == "") {
+            callAlertDanger("#response-andamento-alert", "Preencha o campo de descrição do andamento.", function () {
+                $("#response-andamento-alert").hide("slow");
+                $("#DescricaoAndamento").focus();
+            });
+            return false;
+        }
+
+        $.ajax({
+            url: "/Apartamento/AdicionarAndamento",
+            method: "post",
+            dataType: "json",
+            data: json,
+            success: function (data) {
+                if (data.Sucesso) {
+                    callAlertSuccess("#response-andamento-alert", data.Mensagem, function () {
+                        $("#response-andamento-alert").hide("slow");
+                        window.location.href = "/Apartamento/Detalhes?ApartamentoId=" + data.Id
+                    });
+                } else {
+                    callAlertDanger("#response-andamento-alert", data.Mensagem, function () {
+                        $("#response-andamento-alert").hide("slow");
+                    });
+                }
+            }
+        });  
+        
+    });
+
+    var salvarApartamento = function () {
+
+        // Valida o número
+        if ($('#Numero').val() == 0 || $("#Numero").val() == "") {
+            callAlertDanger("#response-alert", "Insira um número de apartamento válido", function () {
+                $("#response-alert").hide("slow");
+            });
+            return false;
+        }
+
+        // Valida o andar
+        if ($('#Andar').val() == 0 || $("#Andar").val() == "") {
+            callAlertDanger("#response-alert", "Insira um andar válido", function () {
+                $("#response-alert").hide("slow");
+            });
+            return false;
+        }
+
+        var form = $("#form").serialize();
+
+        $.ajax({
+            url: "/Apartamento/Detalhes",
+            method: "POST",
+            data: form,
+            dataType: "json",
+            success: function (data) {
+                if (data.Sucesso) {
+                    callAlertSuccess("#response-alert", data.Mensagem, function () {
+                        $("#response-alert").hide("slow");
+                        window.location.href = "/Apartamento/Detalhes?ApartamentoId=" + data.Id
+                    });
+                } else {
+                    callAlertDanger("#response-alert", data.Mensagem, function () {
+                        $("#response-alert").hide("slow");
+                    });
+                }
+            }
+        });
+    };
+
+    var listaMoradores = function (apartamentoId,input) {
+        $.ajax({
+            url: "/Morador/AdicionarMorador?apartamentoId=" + apartamentoId + "&input=" + input,
+            method: "get",
+            dataType: "html",
+            success: function (data) {
+                $("#divModalMoradores").html(data);
+            }
+        });
+    }
+
+    var delMoradorOcupacao = function (ocupacaoId) {
+
+        var json = {
+            ocupacaoId: ocupacaoId
+        }
+
+        $.ajax({
+            url: "/Morador/delMoradorOcupacao",
+            method: "post",
+            data: json,
+            dataType: "json",
+            success: function (data) {
+                if (data.Sucesso) {
+                    callAlertSuccess("#response-ocupacao-alert", data.Mensagem, function () {
+                        $("#response-ocupacao-alert").hide("slow");
+                        window.location.href = "/Apartamento/Detalhes?ApartamentoId=" + data.Id
+                    });
+                } else {
+                    callAlertDanger("#response-ocupacao-alert", data.Mensagem, function () {
+                        $("#response-ocupacao-alert").hide("slow");
+                    });
+                }
+            }
+        });
+    };
+
+</script>
