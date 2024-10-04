@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewBag.Title = "Home";
+}
+
+<div class="card">
+
+    <div class="card-header">
+        <h5>Moradores</h5>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-sm-9 pt-3">
+                <input class="form-control" id="txtBuscaMorador" placeholder="Digite o nome ou CPF do morador"/>
+            </div>
+
+            <div class="col-sm-3 pt-3">
+                <button class="btn btn-dark btn-block" onclick="window.location.href='/Morador/Detalhes'">Novo morador</button>
+            </div>
+
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="col-sm-12" id="divListaMoradores"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        listaMoradores($("#txtBuscaMorador").val());
+
+        $("#txtBuscaMorador").keyup(function () {
+            listaMoradores($("#txtBuscaMorador").val());
+        });
+    });
+
+    var listaMoradores = function (input) {
+        $.ajax({
+            url: '/Morador/ListarMoradores?input=' + input,
+            method: 'get',
+            dataType: 'html',
+            beforeSend: function () {
+                $("#divListaMoradores").html('<img src="../Content/images/loading.gif" style="width: 100px;" />');
+            },
+            success: function (data) {                
+                $('#divListaMoradores').html(data);
+            }
+        });
+    }
+
+</script>
+

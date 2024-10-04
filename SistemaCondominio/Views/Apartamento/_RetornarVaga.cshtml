@@ -1,0 +1,31 @@
+﻿@model SistemaCondominio.Models.ApartamentoVaga
+
+@using SistemaCondominio.Models
+
+@{
+    Layout = null;
+
+    IEnumerable<Apartamento> listaApartamentos = ViewBag.ListaApartamentos;
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h4>Vaga @Model.Numero.ToString("000")</h4>
+        Piso @Model.Piso
+
+        <hr>
+        <h4>Apartamento</h4>
+        <select class="form-control" id="txApartamentoId">
+            <option value="0">--- Sem alocação ---</option>
+            @foreach (var apartamento in listaApartamentos.OrderBy(x => x.BlocoId).ThenBy(x => x.Numero))
+            {
+                <option value="@apartamento.ApartamentoId" @(Model.ApartamentoId == apartamento.ApartamentoId ? "selected" : "")>
+                    @apartamento.Bloco.Nome - @apartamento.Numero.ToString("000")
+                </option>
+            }
+        </select>
+
+        <button class="btn btn-outline-dark btn-sm btn-block" onclick="alterarVaga({ vagaId: parseInt(@Model.VagaId), apartamentoId: parseInt($('#txApartamentoId').val()) })">Salvar</button>
+        
+    </div>
+</div>

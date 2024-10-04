@@ -1,0 +1,9 @@
+﻿body {
+    margin: 0;
+    padding-top: 0;
+    background-color: #ccc;
+}
+
+.body-content{
+    padding-top: 20px;
+}
