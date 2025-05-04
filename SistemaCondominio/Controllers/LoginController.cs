@@ -36,9 +36,9 @@ namespace SistemaCondominio.Controllers
                     ViewBag.Mensagem = "Usuário não localizado!";
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                ViewBag.Mensagem = "Erro ao tentar efetuar o login ";
+                ViewBag.Mensagem = "Erro ao tentar efetuar o login." + ex.Message;
             }
 
             return View();

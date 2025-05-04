@@ -180,7 +180,7 @@ namespace SistemaCondominio.Controllers
                     return Json(new ResultadoPost { Id = 0, Sucesso = false, Mensagem = "Houve um erro ao efetuar a operação!" });
                 }
             }
-            catch(Exception ex)
+            catch
             {                
                 return Json(new ResultadoPost { Id = 0, Sucesso = false, Mensagem = "Houve um erro ao efetuar a operação!" });
             }

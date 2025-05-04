@@ -56,10 +56,8 @@ namespace SistemaCondominio.Aplicacao
                 {
                     using(var usuarios = new UsuarioRepositorio())
                     {
-                        var senhaHash = GerarHashMD5(login.Password);
-
                         // Busca o usuário
-                        var usuario = usuarios.GetAll().Where(x => x.Login == login.Login && x.Password == senhaHash).FirstOrDefault();
+                        var usuario = usuarios.GetAll().Where(x => x.Login == login.Login && x.Password == login.Password).FirstOrDefault();
 
                         // Não localizou o usuário
                         if (usuario == null) return false;
@@ -83,7 +81,7 @@ namespace SistemaCondominio.Aplicacao
             }
             catch
             {
-                return false;
+                throw;
             }
         }
 
